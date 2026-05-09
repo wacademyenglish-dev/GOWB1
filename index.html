@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WOLFSTATION: RAGNARÖK</title>
+    <!-- Fonts: Cinzel for Epic Titles, Oswald for bold text, Rajdhani for UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Oswald:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ws: {
+                            bg: '#050505',        
+                            stone: '#0f172a',      /* Slate Stone */
+                            frost: '#0ea5e9',      /* Leviathan Axe Blue */
+                            fire: '#dc2626',       /* Blades of Chaos Red */
+                            gold: '#fbbf24',       /* Godly Gold */
+                            text: '#e2e8f0',
+                            muted: '#64748b'
+                        }
+                    },
+                    fontFamily: {
+                        epic: ['Cinzel', 'serif'],
+                        base: ['Oswald', 'sans-serif'],
+                        ui: ['Rajdhani', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* FIMBULWINTER & NORSE STYLING */
+        body {
+            background-color: #050505;
+            color: #e2e8f0;
+            font-family: 'Oswald', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            /* Stone Texture Background */
+            background-image: 
+                radial-gradient(circle at top right, rgba(14, 165, 233, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at bottom left, rgba(220, 38, 38, 0.05) 0%, transparent 50%),
+                url("https://www.transparenttextures.com/patterns/dark-matter.png");
+        }
+
+        /* Falling Snow (Ash) Effect */
+        body::before {
+            content: ''; position: fixed; inset: -100%; z-index: -1; pointer-events: none;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0));
+            background-size: 200px 200px;
+            animation: snowFall 60s linear infinite;
+            opacity: 0.3;
+        }
+        @keyframes snowFall { 0% { transform: translateY(0); } 100% { transform: translateY(100vh); } }
+
+        /* General Typography */
+        h1, h2, h3, .font-epic { font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        .font-ui { font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+
+        /* Norse Stone Panels */
+        .ws-panel {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(5, 5, 10, 0.98));
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 2px solid #1e293b;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(14, 165, 233, 0.05);
+            border-radius: 8px; 
+            transition: all 0.3s ease; position: relative;
+        }
+        
+        /* Nordic Corner Ornaments */
+        .ws-panel::before, .ws-panel::after {
+            content: '❖'; position: absolute; font-size: 1.5rem; color: rgba(14, 165, 233, 0.4);
+            font-family: 'Cinzel', serif; pointer-events: none;
+        }
+        .ws-panel::before { top: -4px; left: 4px; }
+        .ws-panel::after { bottom: -4px; right: 4px; }
+
+        .ws-panel.fire-border { border-color: #7f1d1d; box-shadow: 0 10px 30px rgba(0,0,0,0.9), inset 0 0 20px rgba(220, 38, 38, 0.15); }
+        .ws-panel.fire-border::before, .ws-panel.fire-border::after { color: rgba(220, 38, 38, 0.6); }
+
+        /* Interactive Elements */
+        .interactive-card { cursor: pointer; transition: all 0.3s; border-left: 4px solid #1e293b; }
+        .interactive-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.8); background-color: rgba(14, 165, 233, 0.05); border-left-color: #0ea5e9; }
+        
+        .reveal-content { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .interactive-card.open .reveal-content { max-height: 400px; opacity: 1; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+
+        /* Runic Buttons */
+        .ws-btn {
+            background: linear-gradient(to bottom, #1e293b, #0f172a); 
+            color: #cbd5e1; font-family: 'Cinzel', serif; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            border: 1px solid #334155; border-bottom: 4px solid #020617; border-radius: 4px; 
+            padding: 0.75rem 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            transition: all 0.15s; cursor: pointer; position: relative;
+        }
+        .ws-btn:hover { background: linear-gradient(to bottom, #0284c7, #0369a1); color: #fff; border-color: #38bdf8; border-bottom-color: #082f49; box-shadow: 0 0 20px rgba(14, 165, 233, 0.6); }
+        .ws-btn:active { transform: translateY(3px); border-bottom-width: 1px; box-shadow: 0 1px 2px rgba(0,0,0,0.5); margin-bottom: 3px;}
+
+        .ws-btn.red { background: linear-gradient(to bottom, #7f1d1d, #450a0a); border-color: #991b1b; border-bottom-color: #2e0606; color: #fca5a5; }
+        .ws-btn.red:hover { background: linear-gradient(to bottom, #b91c1c, #7f1d1d); color: #fff; border-color: #ef4444; border-bottom-color: #450a0a; box-shadow: 0 0 20px rgba(220, 38, 38, 0.6); }
+
+        /* Header Magic Glow */
+        .magic-header {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.1) 0%, rgba(5, 5, 5, 0.9) 50%, rgba(220, 38, 38, 0.1) 100%);
+            border-bottom: 2px solid #1e293b;
+        }
+
+        /* Level Layout */
+        .level {
+            display: none; opacity: 0; width: 100%; min-height: 100%;
+            flex-direction: column; position: relative; z-index: 10; padding: 1.5rem;
+        }
+        .level.active { display: flex; animation: fadeLevel 0.5s ease-out forwards; }
+        .level.active::before, .level.active::after { content: ''; margin: auto; }
+        
+        .page-content {
+            margin: auto; width: 100%; max-width: 900px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; flex-shrink: 0; padding: 1rem 0;
+        }
+
+        @keyframes fadeLevel { 0% { opacity: 0; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed; inset: 0; background: radial-gradient(circle at center, #0f172a 0%, #000 100%); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 1; transition: opacity 0.8s ease-in-out;
+        }
+
+        /* Spartan Rage Meter */
+        .rage-container {
+            width: 140px; height: 16px; background: rgba(0,0,0,0.8); border: 2px solid #1e293b; 
+            border-radius: 2px; position: relative; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+        .rage-fill {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #b91c1c, #ef4444);
+            box-shadow: 0 0 10px #ef4444; transition: width 0.3s ease-out;
+        }
+
+        /* Spartan Rage Overlay (Danger) */
+        #rage-overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9000; opacity: 0; transition: opacity 0.3s;
+            box-shadow: inset 0 0 100px rgba(220, 38, 38, 0.8), inset 0 0 20px rgba(251, 191, 36, 0.5);
+            background: radial-gradient(circle, transparent 50%, rgba(127, 29, 29, 0.15) 100%);
+        }
+        .rage-active { opacity: 1 !important; animation: ragePulse 1s infinite alternate; }
+        @keyframes ragePulse { 0% { box-shadow: inset 0 0 100px rgba(220,38,38,0.6); } 100% { box-shadow: inset 0 0 150px rgba(220,38,38,0.9); } }
+
+        .take-damage { animation: flashBlood 0.4s forwards; }
+        @keyframes flashBlood { 0% { background: rgba(220,38,38,0.3); } 100% { background: transparent; } }
+
+        /* Praise Pop-up */
+        .toast-anim { animation: toastUp 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes toastUp {
+            0% { transform: translate(-50%, 20px) scale(0.8); opacity: 0; }
+            10% { transform: translate(-50%, 0) scale(1.1); opacity: 1; filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.6)); }
+            15% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            90% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -20px) scale(0.8); opacity: 0; }
+        }
+
+        /* Runic Text Class */
+        .runic { font-family: 'Oswald', sans-serif; letter-spacing: 4px; color: #94a3b8; }
+        .decrypted { animation: magicReveal 1s forwards; }
+        @keyframes magicReveal {
+            0% { color: #0ea5e9; text-shadow: 0 0 20px #0ea5e9; letter-spacing: 8px; filter: blur(2px); }
+            100% { color: #fbbf24; text-shadow: 0 0 10px #fbbf24; letter-spacing: 2px; filter: blur(0); }
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen w-screen selection:bg-ws-frost selection:text-black">
+
+    <!-- OVERLAYS -->
+    <div id="rage-overlay"></div>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen" class="fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center transition-opacity duration-1000">
+        <div class="relative w-full max-w-sm md:max-w-md mx-auto mb-8 animate-float flex flex-col items-center">
+            <div class="absolute inset-0 bg-ws-frost blur-[60px] opacity-20 pointer-events-none"></div>
+            <!-- Official Art -->
+            <img src="https://m.media-amazon.com/images/I/71oz+f69z7L._AC_UF894,1000_QL80_.jpg" alt="God of War Cover" class="relative z-10 w-full h-auto max-h-[45vh] object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.8)] border-b-4 border-ws-frost/30 pb-4">
+            <h1 class="text-4xl md:text-5xl font-epic font-bold text-white mt-6 tracking-[0.2em] text-center drop-shadow-[0_0_15px_#fff]">RAGNARÖK</h1>
+        </div>
+        
+        <button id="start-btn" onclick="pressStart()" class="font-epic text-2xl font-bold text-gray-300 hover:text-white border-2 border-gray-600 px-10 py-4 hover:bg-gray-800 hover:border-gray-400 transition-all uppercase tracking-widest z-20 shadow-[0_0_15px_rgba(255,255,255,0.05)]">Enter Midgard</button>
+        
+        <div id="loading-ui" class="hidden flex-col items-center mt-4 z-20">
+            <p class="font-epic text-ws-frost tracking-widest uppercase text-sm animate-pulse mb-3 drop-shadow-md">Translating Runes...</p>
+            <p class="font-ui text-gray-400 text-sm border border-gray-800 p-3 bg-black/80 max-w-sm text-center shadow-inner">Wisdom: "We must be better than we were."</p>
+        </div>
+    </div>
+
+    <!-- PRAISE SYSTEM -->
+    <div id="praise-popup" class="fixed top-[12%] left-1/2 hidden z-[10000] pointer-events-none transform -translate-x-1/2">
+        <div class="bg-black/95 px-8 py-3 border-2 border-ws-gold flex items-center gap-4 shadow-[0_0_40px_rgba(251,191,36,0.3)] rounded-sm">
+            <span id="praise-icon" class="text-3xl drop-shadow-md">🪓</span>
+            <span id="praise-text" class="text-ws-gold font-bold text-lg md:text-xl uppercase tracking-widest font-epic text-shadow"></span>
+        </div>
+    </div>
+
+    <!-- TOP HUD -->
+    <header class="h-14 shrink-0 bg-black/95 z-40 flex items-center justify-between px-4 md:px-6 relative magic-header">
+        <div class="flex items-center gap-4 md:gap-6">
+            <div class="flex flex-col hidden sm:flex">
+                <span class="text-[9px] text-gray-500 font-ui tracking-widest uppercase font-bold">God of War</span>
+                <span class="text-xs text-white font-bold font-epic tracking-widest uppercase">Teacher</span>
+            </div>
+            
+            <!-- SPARTAN RAGE METER -->
+            <div class="flex items-center gap-3">
+                <span class="text-[9px] text-gray-400 font-ui uppercase tracking-widest hidden md:block font-bold">Spartan Rage:</span>
+                <div class="rage-container" title="Rage Meter">
+                    <div id="rage-fill" class="rage-fill"></div>
+                </div>
+            </div>
+            <span class="bg-gray-900 text-gray-300 border border-gray-700 font-bold text-[10px] px-2 py-0.5 rounded-sm tracking-widest font-epic shadow-inner">LVL: B1</span>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+            <div class="flex items-center gap-3 bg-black/50 border border-gray-800 rounded-sm px-3 py-1 hidden lg:flex shadow-inner">
+                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest font-ui mr-1">Runes:</span>
+                <button onclick="triggerPraise('STRIKE!', '🪓')" class="text-sm hover:scale-125 transition-transform grayscale hover:grayscale-0" title="Axe">🪓</button>
+                <button onclick="triggerPraise('SPARTAN RAGE!', '🔥')" class="text-sm hover:scale-125 transition-transform grayscale hover:grayscale-0" title="Fire">🔥</button>
+                <button onclick="triggerPraise('WISDOM.', '📖')" class="text-sm hover:scale-125 transition-transform grayscale hover:grayscale-0" title="Wisdom">📖</button>
+            </div>
+            
+            <button onclick="toggleFullscreen()" class="font-ui text-[10px] md:text-xs font-bold text-gray-400 hover:text-white transition-colors tracking-widest hidden sm:block uppercase border border-transparent hover:border-gray-600 px-2 py-1 rounded">
+                [ Fullscreen ]
+            </button>
+            <button onclick="toggleNotes()" class="font-epic text-[10px] md:text-xs font-bold ws-btn py-1 px-3">
+                📖 JOURNAL
+            </button>
+            <button onclick="toggleInventory()" class="font-epic text-[10px] md:text-xs font-bold ws-btn py-1 px-3">
+                🏹 KNOWLEDGE
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full relative z-10 overflow-y-auto scroll-smooth pt-6 pb-12 double-click-area">
+        <div class="w-full h-full relative" id="levels-container">
+            
+            <!-- STAGE 1: THE FORGE -->
+            <!-- LEVEL 1: BRIEFING -->
+            <section class="level active">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-frost drop-shadow-[0_0_5px_#0ea5e9]">Realm Between Realms</h2>
+                    <h1 class="text-3xl md:text-5xl font-bold font-epic uppercase mb-4 text-white tracking-widest">The Forge</h1>
+                    
+                    <div class="ws-panel p-6 md:p-8 max-w-2xl w-full text-base leading-relaxed text-gray-300 text-left">
+                        <p class="mb-3 font-bold text-lg border-b border-gray-700 pb-2 text-ws-gold uppercase tracking-widest font-epic flex items-center gap-3">
+                            <span class="text-xl">🪓</span> Target: Intermediate (B1).
+                        </p>
+                        <p class="mb-4 opacity-90 font-base">A true warrior must learn to control his strength. In this module, you will analyze the philosophy of a Spartan God and his son.</p>
+                        <div class="bg-black/60 p-4 border border-gray-800 rounded-sm shadow-inner">
+                            <h3 class="font-epic uppercase text-xs mb-3 text-ws-frost tracking-widest font-bold">Skill Tree Targets:</h3>
+                            <ul class="list-none pl-1 space-y-3 font-base text-sm text-gray-400">
+                                <li class="flex items-center gap-3"><span class="text-lg">⚖️</span> <strong>Comparatives:</strong> Describe growth and evolution (Better, Greater, Stronger).</li>
+                                <li class="flex items-center gap-3"><span class="text-lg">🔥</span> <strong>Modal MUST:</strong> Express absolute duty and strong obligation.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 2: WARM UP -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-gray-500">Mimir's Question</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">Philosophy</h1>
+                    
+                    <div class="ws-panel p-6 max-w-2xl w-full text-center hover:border-gray-500 transition-colors">
+                        <span class="text-5xl mb-4 block drop-shadow-lg">💭</span>
+                        <p class="text-xl font-bold mb-6 text-white leading-relaxed font-epic">
+                            "What makes a true warrior? Brute strength or a disciplined mind?"
+                        </p>
+                        <div class="bg-black/50 p-4 rounded-sm border-l-4 border-ws-gold text-left">
+                            <p class="font-bold text-ws-gold font-ui text-xs mb-2 tracking-widest uppercase">🗣️ Skald's Voice (Speak):</p>
+                            <p class="font-base text-lg text-gray-300">"I think a true warrior needs [ discipline / strength ] because..."</p>
+                            <p class="font-base text-lg text-gray-300 mt-1">"If you only have strength, you might..."</p>
+                            <p class="font-base text-sm text-gray-500 mt-3 pt-3 border-t border-gray-800">> Follow-up: Is it hard to control your anger?</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 3: INVENTORY 1 -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold">Gather Knowledge</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">Runic Words 1/2</h1>
+                    <p class="text-xs font-base font-bold bg-black/80 px-4 py-1.5 border border-gray-700 mb-6 text-gray-400 uppercase tracking-widest">Collect the words of the Gods to use later.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mx-auto">
+                        <div class="ws-panel p-5 text-center interactive-card" onclick="this.classList.toggle('open')">
+                            <span class="text-4xl mb-2 block drop-shadow-md">🛡️</span>
+                            <h3 class="font-epic font-bold text-lg uppercase tracking-widest mb-1 text-white">Discipline</h3>
+                            <div class="reveal-content text-left">
+                                <p class="text-lg mb-1 font-bold text-ws-gold">Control over your actions and emotions.</p>
+                                <p class="text-sm font-base text-gray-400 italic mb-2">Q: How do you show discipline in your life?</p>
+                                <p class="text-xs font-epic text-gray-400 mt-3 border border-gray-600 text-center py-2 hover:bg-gray-800 hover:text-white transition-all uppercase tracking-widest" onclick="event.stopPropagation(); openInventory('item1')">[ Store in Journal ]</p>
+                            </div>
+                        </div>
+                        <div class="ws-panel p-5 text-center interactive-card" onclick="this.classList.toggle('open')">
+                            <span class="text-4xl mb-2 block drop-shadow-md">⚔️</span>
+                            <h3 class="font-epic font-bold text-lg uppercase tracking-widest mb-1 text-white">Wield</h3>
+                            <div class="reveal-content text-left">
+                                <p class="text-lg mb-1 font-bold text-ws-gold">To hold and use a weapon or power.</p>
+                                <p class="text-sm font-base text-gray-400 italic mb-2">Q: If you could wield any weapon, what would it be?</p>
+                                <p class="text-xs font-epic text-gray-400 mt-3 border border-gray-600 text-center py-2 hover:bg-gray-800 hover:text-white transition-all uppercase tracking-widest" onclick="event.stopPropagation(); openInventory('item2')">[ Store in Journal ]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 4: INVENTORY 2 -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold">Gather Knowledge</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">Runic Words 2/2</h1>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mx-auto">
+                        <div class="ws-panel p-5 text-center interactive-card" onclick="this.classList.toggle('open')">
+                            <span class="text-4xl mb-2 block drop-shadow-md">⚖️</span>
+                            <h3 class="font-epic font-bold text-lg uppercase tracking-widest mb-1 text-white">Responsibility</h3>
+                            <div class="reveal-content text-left">
+                                <p class="text-lg mb-1 font-bold text-ws-gold">A duty or task that you must do.</p>
+                                <p class="text-sm font-base text-gray-400 italic mb-2">Q: What is your biggest responsibility right now?</p>
+                                <p class="text-xs font-epic text-gray-400 mt-3 border border-gray-600 text-center py-2 hover:bg-gray-800 hover:text-white transition-all uppercase tracking-widest" onclick="event.stopPropagation(); openInventory('item3')">[ Store in Journal ]</p>
+                            </div>
+                        </div>
+                        <div class="ws-panel p-5 text-center interactive-card" onclick="this.classList.toggle('open')">
+                            <span class="text-4xl mb-2 block drop-shadow-md">🔥</span>
+                            <h3 class="font-epic font-bold text-lg uppercase tracking-widest mb-1 text-white">Temper</h3>
+                            <div class="reveal-content text-left">
+                                <p class="text-lg mb-1 font-bold text-ws-gold">To make metal stronger with heat, or control anger.</p>
+                                <p class="text-sm font-base text-gray-400 italic mb-2">Q: Do you lose your temper easily?</p>
+                                <p class="text-xs font-epic text-gray-400 mt-3 border border-gray-600 text-center py-2 hover:bg-gray-800 hover:text-white transition-all uppercase tracking-widest" onclick="event.stopPropagation(); openInventory('item4')">[ Store in Journal ]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 5: THE LORE -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-gray-500">Jötnar Shrine</h2>
+                    <h1 class="text-3xl md:text-5xl font-bold font-epic uppercase mb-6 text-white tracking-widest">The Prophecy</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl w-full text-left border-l-4 border-ws-frost bg-black/80 relative">
+                        <div class="flex flex-col md:flex-row items-center gap-6">
+                            <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-gray-600 shrink-0">
+                                <img src="https://uploads.jovemnerd.com.br/wp-content/uploads/2017/05/v-god-of-war-dublador.jpg" alt="Kratos" class="w-full h-full object-cover">
+                            </div>
+                            <div class="font-base text-gray-300 space-y-2">
+                                <p class="text-xl font-bold text-white mb-2">A Father's Burden</p>
+                                <p>Kratos is a God from a distant land. He destroyed his world in anger.</p>
+                                <p>Now, living in the Norse lands, he wants to teach his son, Atreus, how to be better and avoid the mistakes of the past.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 6: CUTSCENE PREP -->
+            <section class="level">
+                <div class="page-content">
+                    <div class="w-16 h-16 border-2 border-ws-gold flex items-center justify-center mb-4 bg-gray-900/50 rounded-full">
+                        <span class="text-2xl text-ws-gold ml-1">▶</span>
+                    </div>
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-gray-500">Mímir's Vision</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">Cinematic</h1>
+                    
+                    <div class="ws-panel p-6 max-w-2xl w-full text-left text-base font-base text-gray-300">
+                        <p class="mb-3 text-ws-gold text-xs uppercase tracking-widest font-bold">Focus Objective:</p>
+                        <p class="mb-2">> Watch the trailer. Listen to the conversation about the knife.</p>
+                        <p class="text-ws-frost border-l-2 border-ws-frost pl-3 bg-sky-900/10 py-2 mt-2">> Pay attention to the tone of voice. Is Kratos angry or teaching a lesson?</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 7: TRAILER -->
+            <section class="level h-full">
+                <div class="page-content h-full w-full max-w-4xl mx-auto justify-center">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold text-center">Memory</h2>
+                    <h1 class="text-2xl md:text-3xl font-bold font-epic uppercase mb-4 text-center text-white tracking-widest">Father and Son</h1>
+                    
+                    <div class="w-full aspect-video border-2 border-gray-600 shadow-[0_0_30px_rgba(0,0,0,0.9)] relative shrink-0 bg-black p-1 rounded-sm">
+                        <!-- God of War Story Trailer -->
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/K0u_kAWLJOA?rel=0" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 8: RUNIC LAB 1 -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-frost text-center">Translation Magic</h2>
+                    <h1 class="text-2xl md:text-4xl font-bold font-epic uppercase mb-6 text-center text-white tracking-widest">Rune Stone 01</h1>
+                    <p class="text-xs font-bold bg-black/80 px-4 py-1.5 border border-gray-800 mb-6 text-gray-500 uppercase tracking-widest font-base">Ask Atreus to read the missing word.</p>
+
+                    <div class="ws-panel p-8 max-w-2xl w-full text-center mx-auto border-t-2 border-ws-frost bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]">
+                        <p class="text-xs text-gray-500 font-bold tracking-widest uppercase mb-4 font-ui">🪓 Voice of Kratos</p>
+                        <p class="text-xl md:text-2xl font-bold text-white mb-8 font-base">
+                            "The responsibility is far <span id="rune1-blank" class="runic px-2 text-3xl mx-1 transition-all">ᚷᚱᛖᚨᛏᛖᚱ</span>."
+                        </p>
+                        
+                        <div id="rune1-btns" class="flex justify-center gap-4">
+                            <button onclick="checkRune(this, false, 'rune1-blank', 'GREAT')" class="ws-btn text-sm">Great</button>
+                            <button onclick="checkRune(this, true, 'rune1-blank', 'GREATER')" class="ws-btn text-sm">Greater</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 9: RUNIC LAB 2 -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-frost text-center">Translation Magic</h2>
+                    <h1 class="text-2xl md:text-4xl font-bold font-epic uppercase mb-6 text-center text-white tracking-widest">Rune Stone 02</h1>
+
+                    <div class="ws-panel p-8 max-w-2xl w-full text-center mx-auto border-t-2 border-ws-frost bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]">
+                        <p class="text-xs text-gray-500 font-bold tracking-widest uppercase mb-4 font-ui">🪓 Voice of Kratos</p>
+                        <p class="text-xl md:text-2xl font-bold text-white mb-8 font-base">
+                            "And you <span id="rune2-blank" class="runic px-2 text-3xl mx-1 transition-all">ᛗᚢᛋᛏ</span> be better than me."
+                        </p>
+                        
+                        <div id="rune2-btns" class="flex justify-center gap-4">
+                            <button onclick="checkRune(this, false, 'rune2-blank', 'SHOULD')" class="ws-btn text-sm">Should</button>
+                            <button onclick="checkRune(this, true, 'rune2-blank', 'MUST')" class="ws-btn text-sm">Must</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 10: GRAMMAR (COMPARATIVES) -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold">Ancient Magic</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">Comparatives</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl mx-auto w-full text-left border-l-4 border-ws-gold">
+                        <p class="text-base font-bold mb-4 text-gray-300 font-base">To show evolution or compare two things, we forge the adjective with <strong class="text-white">-ER</strong>.</p>
+                        
+                        <div class="bg-black/60 p-4 border border-gray-700 space-y-4 font-base">
+                            <div>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1 font-bold">Standard</p>
+                                <p class="text-xl font-bold text-white">"The responsibility is <span class="text-ws-gold">great</span>."</p>
+                            </div>
+                            <div class="border-t border-gray-800 pt-3">
+                                <p class="text-[10px] text-ws-gold uppercase tracking-widest mb-1 font-bold">Forged (Comparative)</p>
+                                <p class="text-xl font-bold text-white">"The responsibility is far <span class="text-ws-gold">greater</span>."</p>
+                            </div>
+                            <div class="border-t border-gray-800 pt-3">
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1 font-bold">Rule</p>
+                                <p class="text-sm font-bold text-gray-400">Short Adjective + ER (Strong -> Stronger, Fast -> Faster).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 11: GRAMMAR (BETTER THAN) -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold">Ancient Magic</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">Better Than</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl mx-auto w-full text-left border-l-4 border-ws-gold">
+                        <p class="text-base font-bold mb-4 text-gray-300 font-base">Some words have chaotic magic. They don't follow the rules. "Good" transforms into <strong class="text-white">BETTER</strong>.</p>
+                        
+                        <div class="bg-black/60 p-4 border border-gray-700 space-y-4 font-base">
+                            <div>
+                                <p class="text-[10px] text-ws-gold uppercase tracking-widest mb-1 font-bold">Comparing Two People (THAN)</p>
+                                <p class="text-xl font-bold text-white">"You must be <span class="text-ws-gold">better than</span> me."</p>
+                            </div>
+                            <div class="border-t border-gray-800 pt-3">
+                                <p class="text-sm font-bold text-gray-400">We always use <strong class="text-white">THAN</strong> to connect the two things we are comparing.</p>
+                                <p class="text-lg font-bold text-gray-300 mt-2">"Axe is <span class="text-ws-gold">heavier than</span> the sword."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 12: GRAMMAR (MUST) -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-fire">Spartan Law</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">Modal: MUST</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl mx-auto w-full text-left border-l-4 border-ws-fire">
+                        <p class="text-base font-bold mb-4 text-gray-300 font-base"><strong class="text-ws-fire">MUST</strong> is not an advice (should). It is a strong obligation, a duty, a law.</p>
+                        
+                        <div class="bg-black/60 p-4 border border-gray-700 space-y-4 font-base">
+                            <div>
+                                <p class="text-[10px] text-ws-fire uppercase tracking-widest mb-1 font-bold">Duty / Obligation</p>
+                                <p class="text-xl font-bold text-white">"We <span class="text-ws-fire">must</span> be better."</p>
+                            </div>
+                            <div class="border-t border-gray-800 pt-3">
+                                <p class="text-[10px] text-ws-fire uppercase tracking-widest mb-1 font-bold">Absolute Prohibition</p>
+                                <p class="text-xl font-bold text-white">"You <span class="text-ws-fire">must never</span> forget that."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 13: GRAMMAR CHECK 1 -->
+            <section class="level">
+                <div class="page-content">
+                    <div class="warning-tape w-full h-2 mb-4 max-w-3xl mx-auto shadow-md bg-ws-gold"></div>
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold">Combat Training</h2>
+                    <h1 class="text-3xl md:text-5xl font-bold font-epic uppercase mb-8 text-white text-center tracking-widest">Forge the Sentence</h1>
+
+                    <div class="space-y-6 max-w-3xl mx-auto w-full text-base font-bold font-base">
+                        <!-- Quest 1 -->
+                        <div class="ws-panel p-8 flex flex-col items-start text-left border-t-4 border-ws-gold bg-gradient-to-b from-yellow-900/10 to-black">
+                            <p class="text-xs text-ws-gold uppercase tracking-widest mb-4 font-bold border border-yellow-800/50 px-3 py-1.5 bg-black/80 flex items-center gap-2">
+                                <span class="animate-pulse">⚔️</span> Target: The Troll
+                            </p>
+                            <p class="text-white mb-6 text-2xl font-base">"The troll is <span id="qte1-blank" class="border-b-4 border-ws-gold px-8 text-transparent transition-all duration-300 drop-shadow-lg">___</span> than us!"</p>
+                            
+                            <div class="flex flex-col sm:flex-row gap-4 w-full" id="qte1-btns">
+                                <button onclick="checkOrder(this, false, 'qte1-blank', 'strong')" class="ws-btn flex-1 text-lg py-4">A) strong</button>
+                                <button onclick="checkOrder(this, true, 'qte1-blank', 'stronger')" class="ws-btn flex-1 text-lg py-4">B) stronger</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 14: GRAMMAR CHECK 2 -->
+            <section class="level">
+                <div class="page-content">
+                    <div class="warning-tape w-full h-2 mb-4 max-w-3xl mx-auto shadow-md bg-ws-fire"></div>
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-fire">Combat Training</h2>
+                    <h1 class="text-3xl md:text-5xl font-bold font-epic uppercase mb-8 text-white text-center tracking-widest">Spartan Law</h1>
+
+                    <div class="space-y-6 max-w-3xl mx-auto w-full text-base font-bold font-base">
+                        <!-- Quest 2 -->
+                        <div class="ws-panel p-8 flex flex-col items-start text-left border-t-4 border-ws-fire bg-gradient-to-b from-red-900/10 to-black">
+                            <p class="text-xs text-ws-fire uppercase tracking-widest mb-4 font-bold border border-red-800/50 px-3 py-1.5 bg-black/80 flex items-center gap-2">
+                                <span class="animate-pulse">🔥</span> Target: Atreus' Anger
+                            </p>
+                            <p class="text-white mb-6 text-2xl font-base">"You <span id="qte2-blank" class="border-b-4 border-ws-fire px-8 text-transparent transition-all duration-300 drop-shadow-lg">___</span> control your temper, boy!"</p>
+                            
+                            <div class="flex flex-col sm:flex-row gap-4 w-full" id="qte2-btns">
+                                <button onclick="checkOrder(this, true, 'qte2-blank', 'must')" class="ws-btn red flex-1 text-lg py-4">A) must</button>
+                                <button onclick="checkOrder(this, false, 'qte2-blank', 'should')" class="ws-btn flex-1 text-lg py-4">B) should</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 15: VISUAL SCAN -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-frost text-center">Observation</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-center text-white tracking-widest">We are not men</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl w-full text-center mx-auto border-t-2 border-ws-frost">
+                        <p class="text-2xl font-bold mb-6 text-white leading-relaxed font-base">
+                            "Kratos says: <span class="text-ws-frost">We are not men. We are more than that.</span>"
+                        </p>
+                        <div class="bg-black/60 p-4 border border-gray-700 text-left">
+                            <p class="font-bold text-ws-gold font-ui text-xs mb-2 tracking-widest uppercase">🗣️ Teacher Prompt:</p>
+                            <p class="font-base text-lg text-gray-300">Discuss with the student:</p>
+                            <ul class="list-disc pl-5 mt-2 space-y-1 text-sm text-gray-400 font-base">
+                                <li>What does Kratos mean? What are they?</li>
+                                <li>Why is the responsibility "greater"?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 16: EMOTION CHECK -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-fire text-center">Observation</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-center text-white tracking-widest">The Boy's Anger</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl w-full text-center mx-auto border-t-2 border-ws-fire">
+                        <p class="text-xl font-bold mb-6 text-white leading-relaxed font-base">
+                            "Freya says: <span class="text-ws-fire">The boy's true nature fights within him.</span>"
+                        </p>
+                        <div class="bg-black/60 p-4 border border-gray-700 text-left">
+                            <p class="font-bold text-ws-fire font-ui text-xs mb-2 tracking-widest uppercase">🗣️ Teacher Prompt:</p>
+                            <p class="font-base text-lg text-gray-300">Discuss with the student:</p>
+                            <ul class="list-disc pl-5 mt-2 space-y-1 text-sm text-gray-400 font-base">
+                                <li>Is Atreus acting like a disciplined warrior in the video?</li>
+                                <li>Why do you think he screams "You are nothing to me!"?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONVERSATION 1: THE WEIGHT OF POWER -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-frost text-center">Open Dialogue</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-center text-white tracking-widest">The Weight of Power</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl w-full text-center mx-auto border-t-2 border-ws-frost">
+                        <span class="text-5xl mb-4 block grayscale opacity-80">⚖️</span>
+                        <p class="text-xl font-bold mb-6 text-white leading-relaxed font-base">
+                            "A weapon is nothing without discipline."
+                        </p>
+                        <div class="bg-black/60 p-4 border border-gray-700 text-left shadow-inner">
+                            <p class="font-bold text-ws-frost font-ui text-xs mb-3 tracking-widest uppercase border-b border-gray-700 pb-2">🗣️ Conversation Focus:</p>
+                            <p class="font-base text-lg text-gray-300 mb-3">1. If you had infinite power, what is the first rule you <strong class="text-white">MUST</strong> follow?</p>
+                            <p class="font-base text-lg text-gray-300 mb-3">2. Who is <strong class="text-white">stronger</strong>: someone who fights every battle, or someone who walks away?</p>
+                            <p class="font-base text-lg text-gray-300">3. Share a moment in your life where you had to control your temper.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONVERSATION 2: GENERATIONS -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-fire text-center">Open Dialogue</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-center text-white tracking-widest">Generations</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl w-full text-center mx-auto border-t-2 border-ws-fire">
+                        <span class="text-5xl mb-4 block grayscale opacity-80">🐺</span>
+                        <p class="text-xl font-bold mb-6 text-white leading-relaxed font-base">
+                            "You must be better than me."
+                        </p>
+                        <div class="bg-black/60 p-4 border border-gray-700 text-left shadow-inner">
+                            <p class="font-bold text-ws-fire font-ui text-xs mb-3 tracking-widest uppercase border-b border-gray-700 pb-2">🗣️ Conversation Focus:</p>
+                            <p class="font-base text-lg text-gray-300 mb-3">1. In what ways do parents want their children to be <strong class="text-white">better than</strong> them?</p>
+                            <p class="font-base text-lg text-gray-300 mb-3">2. Do you think modern teenagers are <strong class="text-white">more disciplined</strong> or <strong class="text-white">less disciplined</strong> than past generations?</p>
+                            <p class="font-base text-lg text-gray-300">3. What is one tradition or lesson you <strong class="text-white">must</strong> pass down to your children?</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 17: MULTIPLAYER PREP -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold text-center">Multiplayer</h2>
+                    <h1 class="text-4xl md:text-5xl font-bold font-epic uppercase mb-6 text-center text-white">Co-Op Mode</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl mx-auto w-full text-center border-t-4 border-ws-gold bg-black/80">
+                        <span class="text-6xl mb-4 block drop-shadow-lg">🤝</span>
+                        <p class="text-2xl font-bold leading-relaxed mb-4 text-white uppercase tracking-widest font-epic">
+                            "Roleplay Active."
+                        </p>
+                        <p class="text-sm font-bold text-gray-400 font-base bg-white/5 p-3 rounded border border-white/10">The teacher plays Kratos (Wisdom/Discipline). The student plays Atreus (Learning/Anger).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 18: ROLEPLAY 1 -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold animate-pulse">Roleplay</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">The Knife</h1>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 w-full max-w-4xl mx-auto font-base">
+                        <div class="flex-1 ws-panel p-6 flex flex-col text-left border-t-2 border-gray-600 bg-black">
+                            <h3 class="text-xl font-bold mb-1 uppercase text-gray-400 font-epic">Teacher</h3>
+                            <p class="text-[10px] tracking-widest mb-4 uppercase text-gray-500 font-ui">Plays: Kratos</p>
+                            <p class="text-base italic mb-2 font-bold text-white">"Boy. Take this knife. It is yours now."</p>
+                        </div>
+                        
+                        <div class="flex-1 ws-panel p-6 flex flex-col text-left border-t-2 border-ws-gold bg-black/90">
+                            <h3 class="text-xl font-bold mb-1 uppercase text-ws-gold font-epic">Student</h3>
+                            <p class="text-[10px] tracking-widest mb-4 uppercase text-ws-gold font-ui">Plays: Atreus</p>
+                            <p class="text-xs text-gray-400 mb-1">Answer using Comparative:</p>
+                            <p class="text-base italic font-bold text-white">"Thank you, father. Does this mean I am <span class="text-ws-gold underline">stronger than</span> before?"</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 19: ROLEPLAY 2 -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-gold animate-pulse">Roleplay</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white tracking-widest">The Lesson</h1>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 w-full max-w-4xl mx-auto font-base">
+                        <div class="flex-1 ws-panel p-6 flex flex-col text-left border-t-2 border-ws-gold bg-black/90">
+                            <h3 class="text-xl font-bold mb-1 uppercase text-ws-gold font-epic">Student</h3>
+                            <p class="text-[10px] tracking-widest mb-4 uppercase text-ws-gold font-ui">Plays: Atreus</p>
+                            <p class="text-xs text-gray-400 mb-1">Ask:</p>
+                            <p class="text-base italic font-bold text-white">"I have a weapon now. Can I fight the monsters alone?"</p>
+                        </div>
+
+                        <div class="flex-1 ws-panel p-6 flex flex-col text-left border-t-2 border-ws-fire bg-black">
+                            <h3 class="text-xl font-bold mb-1 uppercase text-ws-fire font-epic">Teacher</h3>
+                            <p class="text-[10px] tracking-widest mb-4 uppercase text-ws-fire font-ui">Plays: Kratos</p>
+                            <p class="text-base italic mb-2 font-bold text-white">"No. A weapon is nothing without discipline. You <span class="text-ws-fire underline">must</span> control yourself."</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 20: BOSS FIGHT WARNING -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-fire animate-pulse">Incoming Ambush</h2>
+                    <h1 class="text-4xl md:text-5xl font-bold font-epic uppercase mb-6 text-white drop-shadow-[0_0_10px_#dc2626]">The Frost Troll</h1>
+                    
+                    <div class="ws-panel p-8 max-w-2xl mx-auto w-full text-center border-2 border-ws-fire bg-black/90">
+                        <span class="text-6xl mb-4 block animate-bounce grayscale">👹</span>
+                        <p class="text-xl font-bold leading-relaxed mb-4 text-white uppercase tracking-widest font-base">
+                            "A Frost Troll appears!"
+                        </p>
+                        <p class="text-sm font-bold text-gray-400 font-base">Choose the correct grammar to fight. Wrong answers increase Spartan Rage!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 21: BOSS FIGHT 1 -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-fire animate-pulse">Boss Fight</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white">Troll's Strike</h1>
+
+                    <div id="boss-scene-1" class="ws-panel max-w-3xl mx-auto w-full p-6 border border-gray-700 bg-black/90">
+                        <p class="text-lg font-bold text-gray-300 mb-6 font-base text-left">
+                            "The Troll lifts a giant stone pillar. Kratos yells at you to dodge. What is the rule?"
+                        </p>
+                        <div class="flex flex-col gap-3 font-base">
+                            <button class="ws-btn text-left text-sm py-3 hover:border-ws-fire" onclick="checkBoss(1, true)">A) "I MUST dodge the attack!"</button>
+                            <button class="ws-btn text-left text-sm py-3 hover:border-ws-fire" onclick="checkBoss(1, false)">B) "I SHOULD dodge the attack!"</button>
+                        </div>
+                        <p id="boss-feedback-1" class="mt-4 font-bold text-sm tracking-widest font-epic uppercase h-4"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 22: BOSS FIGHT 2 -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-ws-fire animate-pulse">Boss Fight</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-white">Final Blow</h1>
+
+                    <div id="boss-scene-2" class="ws-panel max-w-3xl mx-auto w-full p-6 border border-gray-700 bg-black/90">
+                        <p class="text-lg font-bold text-gray-300 mb-6 font-base text-left">
+                            "You shoot an arrow. Kratos throws his axe. Your attack needs to be strong to win."
+                        </p>
+                        <div class="flex flex-col gap-3 font-base">
+                            <button class="ws-btn text-left text-sm py-3 hover:border-ws-gold" onclick="checkBoss(2, false)">A) "We must be more better!"</button>
+                            <button class="ws-btn text-left text-sm py-3 hover:border-ws-gold" onclick="checkBoss(2, true)">B) "We must be better than him!"</button>
+                        </div>
+                        <p id="boss-feedback-2" class="mt-4 font-bold text-sm tracking-widest font-epic uppercase h-4"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 23: POST-GAME DEBATE -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-gray-500 text-center">The Summit</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-center text-white">Expectations</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl mx-auto w-full text-center border-t-2 border-ws-frost bg-black">
+                        <span class="text-5xl mb-4 block grayscale opacity-80">🏔️</span>
+                        <p class="text-xl font-bold leading-relaxed mb-6 text-white font-base">
+                            "You must be better than me."
+                        </p>
+                        <div class="bg-gray-900/50 border border-gray-800 p-6 text-left font-base">
+                            <p class="text-ws-frost font-bold text-sm mb-4 tracking-widest uppercase border-b border-gray-800 pb-2">🗣️ Deep Discussion:</p>
+                            <p class="text-lg text-gray-300 mb-3">> 1. Is it difficult to live under the expectations of your parents?</p>
+                            <p class="text-lg text-gray-300 mb-3">> 2. What is one thing you are "better at" than your parents?</p>
+                            <p class="text-lg text-gray-300">> 3. Why is discipline more important than power?</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 24: SIDE QUEST -->
+            <section class="level">
+                <div class="page-content">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-gray-500 text-center">Assignment</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-6 text-center text-white">Golden Rules</h1>
+                    
+                    <div class="ws-panel p-8 max-w-3xl mx-auto w-full relative bg-black/95 border border-ws-gold text-left">
+                        <div class="absolute -top-3 -right-3 bg-ws-gold text-black font-bold uppercase tracking-widest px-3 py-1 text-xs font-epic">HOMEWORK</div>
+                        <p class="text-base font-bold mb-4 text-gray-300 font-base">
+                            "Write 4 rules for your own life to be a better person."
+                        </p>
+                        <ul class="list-disc pl-5 text-sm font-bold space-y-2 text-gray-400 font-base">
+                            <li>Write 2 sentences using <strong class="text-ws-gold">MUST</strong> (e.g. "I must study more").</li>
+                            <li>Write 2 sentences using <strong class="text-ws-gold">Comparatives</strong> (e.g. "I want to be faster").</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LEVEL 25: SAVE POINT -->
+            <section class="level">
+                <div class="page-content items-center text-center">
+                    <h2 class="font-epic font-bold tracking-[0.2em] mb-1 uppercase text-xs text-gray-500">System Admin</h2>
+                    <h1 class="text-3xl md:text-4xl font-bold font-epic uppercase mb-8 text-white">Yggdrasil</h1>
+
+                    <div class="space-y-3 max-w-md w-full text-sm font-bold text-left mb-8 text-gray-400 font-base">
+                        <label class="flex items-center gap-3 p-3 ws-panel bg-black border border-gray-800">
+                            <input type="checkbox" class="w-4 h-4" checked disabled>
+                            <span>Comparatives Unlocked.</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 ws-panel bg-black border border-gray-800">
+                            <input type="checkbox" class="w-4 h-4" checked disabled>
+                            <span>Modal MUST Unlocked.</span>
+                        </label>
+                    </div>
+
+                    <div class="border-t border-gray-800 pt-6 w-full flex flex-col items-center">
+                        <p class="mb-4 text-xs font-bold text-gray-500 uppercase tracking-widest font-ui">Rate the epicness of this class:</p>
+                        <div class="flex justify-center gap-2 mb-6">
+                            <button onclick="rate(1)" class="game-rating text-3xl grayscale opacity-30 hover:scale-110 transition-transform">🪓</button>
+                            <button onclick="rate(2)" class="game-rating text-3xl grayscale opacity-30 hover:scale-110 transition-transform">🪓</button>
+                            <button onclick="rate(3)" class="game-rating text-3xl grayscale opacity-30 hover:scale-110 transition-transform">🪓</button>
+                            <button onclick="rate(4)" class="game-rating text-3xl grayscale opacity-30 hover:scale-110 transition-transform">🪓</button>
+                            <button onclick="rate(5)" class="game-rating text-3xl grayscale opacity-30 hover:scale-110 transition-transform">🪓</button>
+                        </div>
+                        <div id="rat-hub" class="hidden font-bold text-xs text-ws-frost font-epic">> <span id="star-c"></span> AXES SCORED.</div>
+                        
+                        <button onclick="window.location.reload();" class="mt-6 ws-btn text-xs border-ws-frost hover:border-ws-frost">
+                            End Journey
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- BOTTOM HUD -->
+    <footer class="fixed bottom-0 left-0 w-full h-12 bg-black/95 border-t border-gray-800 z-40 flex items-center justify-between px-4 transition-colors shadow-md">
+        
+        <div class="flex items-center gap-2">
+            <button onclick="prevLevel()" class="w-8 h-8 flex items-center justify-center border border-gray-700 rounded-sm hover:border-gray-400 hover:text-white transition-colors bg-white/5 text-gray-500 font-bold text-lg">
+                ◂
+            </button>
+        </div>
+
+        <div class="flex-1 flex flex-col items-center justify-center px-4">
+            <div class="flex justify-between w-full max-w-md mb-1">
+                <span class="text-[8px] font-ui text-gray-600 font-bold tracking-widest uppercase">Progress</span>
+                <span class="text-[8px] font-ui text-gray-400 font-bold tracking-widest uppercase">LVL <span id="level-num" class="text-white text-xs mx-1">1</span>/27</span>
+            </div>
+            <div class="w-full max-w-md bg-gray-900 h-1.5 rounded-sm overflow-hidden border border-gray-800">
+                <div id="xp-bar" class="h-full bg-ws-frost w-0 transition-all duration-500"></div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button onclick="nextLevel()" class="w-8 h-8 flex items-center justify-center border border-gray-700 rounded-sm hover:border-gray-400 hover:text-white transition-colors bg-white/5 text-gray-500 font-bold text-lg">
+                ▸
+            </button>
+        </div>
+    </footer>
+
+    <!-- INVENTORY (MIMIR'S KNOWLEDGE) -->
+    <aside id="inventory-panel" class="fixed top-12 bottom-12 right-0 w-full max-w-xs bg-black/95 border-l border-gray-700 z-50 translate-x-full flex flex-col transition-transform duration-400">
+        <div class="p-3 border-b border-gray-700 bg-gray-900 flex justify-between items-center shrink-0">
+            <h2 class="font-bold uppercase tracking-widest text-sm flex items-center gap-2 text-gray-300 font-epic">
+                🏹 Mimir's Knowledge
+            </h2>
+            <button onclick="toggleInventory()" class="text-gray-500 hover:text-white font-bold text-xl px-2">✕</button>
+        </div>
+        <div class="flex-1 w-full p-4 overflow-y-auto" id="inventory-content">
+            <p id="empty-inv" class="text-center text-gray-600 font-ui text-xs mt-6 uppercase tracking-widest font-bold">Quiver is empty.</p>
+            <div id="item-list" class="space-y-3"></div>
+        </div>
+    </aside>
+
+    <!-- NOTES (RUNIC JOURNAL) -->
+    <aside id="notes-panel" class="fixed top-12 bottom-12 left-0 w-full max-w-xs bg-[#0f172a] border-r border-gray-600 z-50 -translate-x-full flex flex-col transition-transform duration-400 text-gray-300 shadow-[10px_0px_20px_rgba(0,0,0,0.5)]">
+        <div class="p-3 border-b border-gray-600 bg-[#1e293b] flex justify-between items-center shrink-0">
+            <h2 class="font-bold uppercase tracking-widest text-sm flex items-center gap-2 text-gray-200 font-epic">
+                📖 Runic Journal
+            </h2>
+            <button onclick="toggleNotes()" class="text-gray-500 hover:text-white font-bold text-xl px-2">✕</button>
+        </div>
+        <div class="flex-1 w-full p-3 overflow-hidden flex flex-col bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
+            <textarea id="class-notes" class="flex-1 w-full bg-transparent border-none outline-none font-base text-sm leading-relaxed resize-none text-gray-300" placeholder="Carve your notes here..."></textarea>
+        </div>
+    </aside>
+
+    <!-- JS LOGIC -->
+    <script>
+        // --- 1. Pagination ---
+        let currentLevel = 0;
+        const levels = document.querySelectorAll('.level');
+        const totalLevels = levels.length; 
+
+        function updateUI() {
+            document.getElementById('level-num').innerText = (currentLevel + 1);
+            const xp = document.getElementById('xp-bar');
+            if(totalLevels > 1) xp.style.width = `${(currentLevel / (totalLevels - 1)) * 100}%`;
+            
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => { const src = iframe.src; iframe.src = src; });
+            document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToLevel(i) {
+            if (i < 0 || i >= totalLevels) return;
+            levels.forEach(l => l.classList.remove('active'));
+            currentLevel = i;
+            levels[currentLevel].classList.add('active');
+            updateUI();
+        }
+
+        function nextLevel() { goToLevel(currentLevel + 1); }
+        function prevLevel() { goToLevel(currentLevel - 1); }
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight') nextLevel();
+            if(e.key === 'ArrowLeft') prevLevel();
+        });
+
+        // --- 2. PRESS START ---
+        function pressStart() {
+            document.getElementById('start-btn').classList.add('hidden');
+            document.getElementById('loading-ui').classList.remove('hidden');
+            document.getElementById('loading-ui').classList.add('flex');
+
+            setTimeout(() => {
+                const screen = document.getElementById('loading-screen');
+                screen.style.opacity = '0';
+                setTimeout(() => { screen.style.display = 'none'; }, 800);
+            }, 2000); 
+        }
+
+        // --- 3. UI Controls ---
+        function toggleFullscreen() {
+            const doc = window.document;
+            const docEl = doc.documentElement;
+            const req = docEl.requestFullscreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            const exit = doc.exitFullscreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+            
+            if (!doc.fullscreenElement && req) { 
+                const promise = req.call(docEl);
+                if (promise) promise.catch(err => console.warn("Fullscreen disallowed: ", err));
+            } else if (doc.fullscreenElement && exit) { 
+                const promise = exit.call(doc);
+                if (promise) promise.catch(err => console.warn("Fullscreen disallowed: ", err));
+            }
+        }
+
+        function toggleInventory() {
+            const inv = document.getElementById('inventory-panel');
+            const notes = document.getElementById('notes-panel');
+            if (!notes.classList.contains('-translate-x-full')) notes.classList.add('-translate-x-full');
+            inv.classList.toggle('translate-x-full');
+        }
+
+        function toggleNotes() {
+            const notes = document.getElementById('notes-panel');
+            const inv = document.getElementById('inventory-panel');
+            if (!inv.classList.contains('translate-x-full')) inv.classList.add('translate-x-full');
+            notes.classList.toggle('-translate-x-full');
+        }
+
+        // --- 4. Praise System ---
+        function triggerPraise(main, icon) {
+            const popup = document.getElementById('praise-popup');
+            document.getElementById('praise-text').innerText = main;
+            document.getElementById('praise-icon').innerText = icon;
+            popup.classList.remove('hidden', 'toast-anim');
+            void popup.offsetWidth; 
+            popup.classList.add('toast-anim');
+            setTimeout(() => { popup.classList.add('hidden'); }, 2500); 
+        }
+
+        // --- 5. INVENTORY
+        const itemsDB = {
+            'item1': { title: 'Discipline', icon: '🛡️', desc: 'Control over your actions.', q: 'How do you show discipline in your life?' },
+            'item2': { title: 'Wield', icon: '⚔️', desc: 'To hold and use a weapon.', q: 'If you could wield any weapon, what would it be?' },
+            'item3': { title: 'Responsibility', icon: '⚖️', desc: 'A duty that you must do.', q: 'What is your biggest responsibility right now?' },
+            'item4': { title: 'Temper', icon: '🔥', desc: 'To make stronger, or control anger.', q: 'Do you lose your temper easily?' }
+        };
+        const ownedItems = new Set();
+
+        function openInventory(itemKey) {
+            if(ownedItems.has(itemKey)) return;
+            ownedItems.add(itemKey);
+            document.getElementById('empty-inv').classList.add('hidden');
+            
+            const d = itemsDB[itemKey];
+            const card = document.createElement('div');
+            card.className = 'bg-gray-900 border border-gray-700 p-3 text-left flex flex-col gap-2 rounded-sm';
+            card.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">${d.icon}</span>
+                    <div>
+                        <h3 class="font-epic font-bold text-sm text-ws-gold uppercase">${d.title}</h3>
+                        <p class="text-xs text-gray-400 font-base">${d.desc}</p>
+                    </div>
+                </div>
+                <div class="bg-black/50 p-2 mt-1 border-l-2 border-ws-gold">
+                    <p class="text-[10px] text-ws-gold font-ui font-bold uppercase tracking-widest mb-1">Follow-up:</p>
+                    <p class="text-xs text-gray-300 font-base italic">"${d.q}"</p>
+                </div>
+            `;
+            document.getElementById('item-list').appendChild(card);
+            triggerPraise('KNOWLEDGE GAINED', '🏹');
+            document.getElementById('inventory-panel').classList.remove('translate-x-full');
+        }
+
+        // --- 6. RUNIC DECRYPTION
+        function checkRune(btn, isCorrect, targetId, word) {
+            const container = btn.parentElement;
+            if(isCorrect) {
+                triggerPraise('RUNE TRANSLATED', '✨');
+                const blank = document.getElementById(targetId);
+                blank.classList.remove('runic');
+                blank.classList.add('decrypted');
+                blank.innerText = word;
+                container.style.display = 'none';
+            } else {
+                triggerPraise('INCORRECT RUNE', '❌');
+                container.classList.add('opacity-30');
+                setTimeout(() => container.classList.remove('opacity-30'), 500);
+                increaseRage();
+            }
+        }
+
+        // --- 7. SPARTAN RAGE METER (RPG MECHANIC) ---
+        let rage = 0;
+        function increaseRage() {
+            rage += 34;
+            if (rage > 100) rage = 100;
+            document.getElementById('rage-fill').style.width = rage + '%';
+            
+            if (rage >= 100) {
+                document.getElementById('rage-overlay').classList.add('rage-active');
+                triggerPraise('SPARTAN RAGE!', '🔥');
+                setTimeout(() => {
+                    document.getElementById('rage-overlay').classList.remove('rage-active');
+                    rage = 0;
+                    document.getElementById('rage-fill').style.width = '0%';
+                }, 3000);
+            } else {
+                // Flash damage effect
+                const over = document.getElementById('rage-overlay');
+                over.classList.remove('take-damage');
+                void over.offsetWidth;
+                over.classList.add('take-damage');
+            }
+        }
+
+        // --- 8. BOSS FIGHT CHECKS ---
+        function checkOrder(btn, isCorrect, targetId, word) {
+            const container = btn.parentElement;
+            if(isCorrect) {
+                triggerPraise('GOOD HIT!', '🪓');
+                const blank = document.getElementById(targetId);
+                blank.classList.remove('text-transparent', 'border-ws-gold', 'border-ws-fire');
+                blank.classList.add('text-ws-frost', 'border-ws-frost', 'drop-shadow-[0_0_8px_#0ea5e9]');
+                blank.innerText = word;
+                container.style.display = 'none';
+            } else {
+                triggerPraise('MISSED!', '⚠️');
+                container.classList.add('opacity-30');
+                setTimeout(() => container.classList.remove('opacity-30'), 500);
+                increaseRage();
+            }
+        }
+
+        function checkBoss(sceneNum, isCorrect) {
+            const fb = document.getElementById(`boss-feedback-${sceneNum}`);
+            const btns = document.getElementById(`boss-scene-${sceneNum}`).querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+
+            if(isCorrect) {
+                triggerPraise('FLAWLESS STRIKE!', '🪓');
+                fb.innerHTML = "<span class='text-ws-frost'>[ SUCCESS ] Attack lands!</span>";
+                setTimeout(() => { nextLevel(); btns.forEach(b => b.disabled = false); fb.innerHTML = ""; }, 1500);
+            } else {
+                triggerPraise('BLOCKED!', '🛡️');
+                fb.innerHTML = "<span class='text-ws-fire'>[ FAILED ] The monster attacks!</span>";
+                increaseRage();
+                setTimeout(() => { fb.innerHTML = ""; btns.forEach(b => b.disabled = false); }, 1500);
+            }
+        }
+
+        // --- 9. RATING & NOTES
+        function rate(n) {
+            document.querySelectorAll('.game-rating').forEach((d, i) => {
+                d.classList.toggle('grayscale', i >= n);
+                d.classList.toggle('opacity-30', i >= n);
+            });
+            document.getElementById('rat-hub').classList.remove('hidden');
+            document.getElementById('star-c').innerText = n;
+        }
+
+        const notesText = document.getElementById('class-notes');
+        if(localStorage.getItem('wolfstation_gow_notes')) notesText.value = localStorage.getItem('wolfstation_gow_notes');
+        notesText.addEventListener('input', () => localStorage.setItem('wolfstation_gow_notes', notesText.value));
+
+        updateUI();
+    </script>
+</body>
+</html>
